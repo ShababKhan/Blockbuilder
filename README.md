@@ -1,4 +1,4 @@
-# Workflow Builder Kit (POC)
+# Blockbuilder Workflow Kit (POC)
 
 🚧 **Work In Progress** 🚧
 
