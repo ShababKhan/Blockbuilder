@@ -145,7 +145,7 @@ const NodeModal = ({ isOpen, onClose, nodeData, onSave, onRun, onDelete }) => {
             />
           )}
           {activeTab === 'pseudocode' && (
-            <div style={{ height: '300px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ height: '450px', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ flex: 1, overflowY: 'auto', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px', padding: '4px' }}>
                     {formData.pseudocode.split('\n').filter(s => s.trim()).map((step, index) => (
                         <div key={index} style={{
@@ -156,7 +156,8 @@ const NodeModal = ({ isOpen, onClose, nodeData, onSave, onRun, onDelete }) => {
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
-                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                            flexShrink: 0
                         }}>
                             <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', color: '#334155' }}>{index + 1}. {step}</span>
                             <button 
@@ -201,7 +202,7 @@ const NodeModal = ({ isOpen, onClose, nodeData, onSave, onRun, onDelete }) => {
             </div>
           )}
           {activeTab === 'pythonScript' && (
-            <div style={{ height: '300px', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ height: '450px', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', cursor: 'pointer', userSelect: 'none' }}>
                         <input 
@@ -221,9 +222,9 @@ const NodeModal = ({ isOpen, onClose, nodeData, onSave, onRun, onDelete }) => {
                         onChange={(e) => handleChange('pythonScript', e.target.value)}
                     />
                 ) : (
-                    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px', paddingRight: '8px' }}>
                         {formData.pseudocode.split('\n').filter(s => s.trim()).map((step, index) => (
-                            <div key={index} style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden' }}>
+                            <div key={index} style={{ border: '1px solid #e2e8f0', borderRadius: '6px', overflow: 'hidden', flexShrink: 0 }}>
                                 <div style={{ 
                                     backgroundColor: '#f1f5f9', 
                                     padding: '8px 12px', 
@@ -261,7 +262,7 @@ const NodeModal = ({ isOpen, onClose, nodeData, onSave, onRun, onDelete }) => {
             </div>
           )}
           {activeTab === 'io' && (
-            <div style={{ display: 'flex', gap: '16px', height: '300px' }}>
+            <div style={{ display: 'flex', gap: '16px', height: '450px' }}>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     <label style={{ marginBottom: '8px', fontWeight: '600', color: '#334155', fontSize: '14px' }}>Expected Input Example</label>
                     <textarea 

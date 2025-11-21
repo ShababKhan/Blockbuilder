@@ -14,12 +14,18 @@ import 'reactflow/dist/style.css';
 import axios from 'axios';
 
 import CustomNode from './components/CustomNode';
+import CustomEdge from './components/CustomEdge';
 import NodeModal from './components/NodeModal';
 import CatalogModal from './components/CatalogModal';
+import LoadWorkflowModal from './components/LoadWorkflowModal';
 import WelcomeScreen from './components/WelcomeScreen';
 
 const nodeTypes = {
   customNode: CustomNode,
+};
+
+const edgeTypes = {
+  customEdge: CustomEdge,
 };
 
 const initialNodes = [
@@ -39,22 +45,22 @@ export default function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const [loadModalOpen, setLoadModalOpen] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [workflowName, setWorkflowName] = useState('My Workflow');
 
   const defaultEdgeOptions = {
-    type: 'step',
+    type: 'customEdge',
     markerEnd: {
       type: MarkerType.ArrowClosed,
       color: '#22c55e',
     },
     style: {
-      stroke: 'url(#red-green-gradient)',
       strokeWidth: 2,
     },
   };
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge({ ...params, type: 'step' }, eds)), [setEdges]);
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge({ ...params, type: 'customEdge' }, eds)), [setEdges]);
 
   const onNodeClick = (event, node) => {
     setSelectedNodeId(node.id);
@@ -228,6 +234,21 @@ export default function App() {
     }
   };
 
+  const handleLoadWorkflow = (workflowData) => {
+    setNodes(workflowData.nodes || []);
+    setEdges(workflowData.edges || []);
+    // If the loaded workflow has a name property, use it, otherwise keep current or derive from filename if passed
+    // For now, we don't get the name back in the body unless we saved it there.
+    // The backend load_workflow returns the JSON content.
+    // Let's assume the user wants to keep working on it.
+    // We might want to update the workflowName state if we knew the name.
+    // But the load_workflow endpoint returns the JSON content which might not have the name field if we didn't save it.
+    // Let's check save_workflow in backend. It saves nodes and edges.
+    // We should probably save the name too.
+    // For now, just load nodes and edges.
+    setLoadModalOpen(false);
+  };
+
   const selectedNodeData = nodes.find(n => n.id === selectedNodeId)?.data;
 
   if (view === 'welcome') {
@@ -279,6 +300,24 @@ export default function App() {
                 title="Save Workflow"
             >
                 Save
+            </button>
+            <button 
+                onClick={() => setLoadModalOpen(true)}
+                style={{
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    border: '1px solid #cbd5e1',
+                    backgroundColor: 'white',
+                    color: '#0f172a',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px'
+                }}
+                title="Open Workflow"
+            >
+                Open...
             </button>
         </div>
         <button 
@@ -377,20 +416,13 @@ export default function App() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         onNodeClick={onNodeClick}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
       >
         <Background color="#ccc" gap={20} />
         <Controls />
-        <svg style={{ position: 'absolute', top: 0, left: 0 }}>
-          <defs>
-            <linearGradient id="red-green-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#ef4444" />
-              <stop offset="100%" stopColor="#22c55e" />
-            </linearGradient>
-          </defs>
-        </svg>
       </ReactFlow>
 
       <NodeModal
@@ -406,6 +438,12 @@ export default function App() {
         isOpen={catalogOpen}
         onClose={() => setCatalogOpen(false)}
         onSelectTemplate={addTemplateNode}
+      />
+
+      <LoadWorkflowModal
+        isOpen={loadModalOpen}
+        onClose={() => setLoadModalOpen(false)}
+        onLoadWorkflow={handleLoadWorkflow}
       />
     </div>
   );

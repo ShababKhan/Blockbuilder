@@ -146,6 +146,42 @@ if __name__ == "__main__":
             "error": str(e)
         }
 
+@app.get("/workflows")
+def list_workflows():
+    """
+    Lists all saved workflows.
+    """
+    try:
+        base_path = os.path.join(os.getcwd(), "saved_workflows")
+        if not os.path.exists(base_path):
+            return {"workflows": []}
+        
+        workflows = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d))]
+        return {"workflows": workflows}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/load-workflow/{name}")
+def load_workflow(name: str):
+    """
+    Loads a workflow by name.
+    """
+    try:
+        base_path = os.path.join(os.getcwd(), "saved_workflows")
+        workflow_path = os.path.join(base_path, name)
+        json_path = os.path.join(workflow_path, "workflow.json")
+
+        if not os.path.exists(json_path):
+            raise HTTPException(status_code=404, detail="Workflow not found")
+
+        with open(json_path, "r") as f:
+            workflow_data = json.load(f)
+            
+        return workflow_data
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
